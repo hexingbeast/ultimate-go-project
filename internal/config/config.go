@@ -9,8 +9,14 @@ import (
 )
 type Config struct {
     Env string `mapstructure:"env"`
-    StoragePath string `mapstructure:"storage_path"`
+    Redis
     HTTPServer `mapstructure:"http_server"`
+}
+
+type Redis struct {
+    Address string `mapstructure:"address"`
+    Password string `mapstructure:"password"`
+    DB int `mapstructure:"db"`
 }
 
 type HTTPServer struct {

@@ -1,8 +1,12 @@
 # окружений в котором запускают
 env: "local" # local, dev, prod
 
-# путь до файла в котором будет храниться бд
-storage_path: "./storage/storage.db"
+# настройки redis
+redis:
+  address: "localhost:6379"
+  password: ""
+  # номер базы(по умолчанию 0)
+  db: 0
 
 # настройки http сервера
 http_server:
