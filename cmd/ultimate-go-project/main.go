@@ -2,9 +2,11 @@ package main
 
 import (
 	"log/slog"
+	"net/http"
 	"os"
 	"ultimate-go-project/internal/config"
 	"ultimate-go-project/internal/lib/logger"
+	"ultimate-go-project/internal/router"
 	redisdb "ultimate-go-project/internal/storage/redis"
 )
 
@@ -25,18 +27,30 @@ func main() {
         os.Exit(1)
     }
 
-    _ = rbd
+    // создаем роуты
+    router := router.Create(log, rbd)
+    log.Info("starting server", slog.String("address", cfg.HTTPServer.Address))
 
-	//    ctx := context.Background()
-	//    // err = rbd.Set(ctx, "testkey", "Hola, redis", 0).Err()
-	//    if err := rbd.Set(ctx, "testkey", "Hola, redis", 0).Err(); err != nil {
-	// log.Fatalf("Ошибка при записи в redis: %v", err)
-	//    }
-	//
-	//    val, err := rbd.Get(ctx, "testkey").Result()
-	//    if err != nil {
-	// log.Fatalf("Ошибка при чтении из redis: %v", val)
-	//    }
+    // создаем сам сервер
+    srv := &http.Server{
+        Addr: cfg.HTTPServer.Address,
+        // router также является handler, получается что это handler
+        // внутри с нашими добавленными handler-ами
+        Handler: router,
+        ReadTimeout: cfg.HTTPServer.Timeout,
+        WriteTimeout: cfg.HTTPServer.Timeout,
+        IdleTimeout: cfg.HTTPServer.IdleTimeout,
+    }
+
+    // вызываем наш сервер, ListenAndServe() это блокирующая функция
+    // она не пускает нашу программу дальше
+    if err := srv.ListenAndServe(); err != nil {
+        log.Error("failed to start server")
+    }
+    // если сюда программа дошла, то произошла ошибка и сервер остановлен
+    log.Error("server stopped")
+
+    _ = rbd
     
 }
 
