@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"ultimate-go-project/internal/config"
+	"ultimate-go-project/internal/storage"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -37,9 +38,17 @@ func (rds *RedisStorage) SaveData(key string, value string) error {
 			return fmt.Errorf("%s: %w", op, err)
 	   }
 	return nil
-	//
-	//    val, err := rbd.Get(ctx, "testkey").Result()
-	//    if err != nil {
-	// log.Fatalf("Ошибка при чтении из redis: %v", val)
-	//    }
+}
+
+func (rds *RedisStorage) GetData(key string) (string, string, error) {
+	const op = "storage.redis.GetData"
+	ctx := context.Background()
+	res, err := rds.redisDB.Get(ctx, key).Result()
+	if err == redis.Nil {
+		return "", "", storage.ErrNotFound
+	}	
+	if err != nil {
+		return "", "", fmt.Errorf("%s: %w", op, err)
+	}
+	return key, res, nil
 }

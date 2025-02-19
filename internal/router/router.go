@@ -3,6 +3,7 @@ package router
 import (
 	"log/slog"
 	"net/http"
+	"ultimate-go-project/internal/http-server/handlers/redis/redis_get"
 	"ultimate-go-project/internal/http-server/handlers/redis/redis_save"
 	"ultimate-go-project/internal/lib/logger"
 	redisdb "ultimate-go-project/internal/storage/redis"
@@ -28,7 +29,7 @@ func Create(log *slog.Logger, redisStorage *redisdb.RedisStorage) http.Handler {
     router.Use(middleware.URLFormat)
 
     router.Post("/redis", redis_save.New(log, redisStorage))
-    // router.Get("redis/{key}", redisGet.Value())
+    router.Get("/redis/{key}", redis_get.GetValue(log, redisStorage))
     // router.Delete("redis/{key}", redisDelete.Value())
 
     return router 
