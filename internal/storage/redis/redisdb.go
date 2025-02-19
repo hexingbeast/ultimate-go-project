@@ -52,3 +52,16 @@ func (rds *RedisStorage) GetData(key string) (string, string, error) {
 	}
 	return key, res, nil
 }
+
+func (rds *RedisStorage) DeleteData(key string) error {
+	const op = "storage.redis.DeleteData"
+	ctx := context.Background()
+	deleted, err := rds.redisDB.Del(ctx, key).Result()
+	if deleted == 0 {
+		return storage.ErrNotFound
+	}	
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
+}
