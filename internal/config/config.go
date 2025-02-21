@@ -19,6 +19,12 @@ type Redis struct {
     DB int `mapstructure:"db"`
 }
 
+type Kafka struct {
+    Brokers []string `mapstructure:"brokers"`
+    Topic string `mapstructure:"topic"`
+    GroupId string `mapstructure:"group_id"`
+}
+
 type HTTPServer struct {
     Address string `mapstructure:"address"`
     Timeout time.Duration `mapstructure:"timeout"`

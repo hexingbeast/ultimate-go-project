@@ -18,3 +18,8 @@ http_server:
   idle_timeout: 60s
   user: "myuser"
   password: "mypassword"
+
+kafka:
+  brokers: ["localhost:9092"]
+  topic: "my-topic"
+  group_id: "my-group"
